@@ -3,24 +3,42 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Player_control : MonoBehaviour
-{
+{   
+    [SerializeField]
+    //총알 받아오기
+    public GameObject Bullet;
+
+
     //Regidbody 정보를 받을 변수 선언
     private Rigidbody2D Rigid_body2;
+
+    //Player의 이동벡터를 담을 변수
+    private Vector2 Move_vector;
+
+    //이동 속도를 담을 변수 
+    public float Move_speed= 5f;
 
     //마우스의 위치를 저장할 변수
     private Vector2 Mousepos;
 
-    //발사대의 각도를 조정할 변수
-    private float angle;
+    private Vector2 angle2;
 
-    //회전 속도를 제어할 함수
-    public float rotation_speed = 10f;
+    //메인 카메라 받기
+    private Camera Cam;
+
+    //Bullet_control에서 가져올 Bullet_speed를 저장할 변수
+    // private float B_s;
 
     // Start is called before the first frame update
     void Start()
     {   
         //게임 시작 시, rigidbody 2d component 받아오기
-        Rigid_body2 = GetComponent<Rigidbody2D>();
+        Rigid_body2 = gameObject.GetComponent<Rigidbody2D>();
+
+        //시작 시 main camera 받기
+        Cam = Camera.main;
+
+        // B_s = Bullet.GetComponent<Bullet_control>().Bullet_speed;
     }
 
     // Update is called once per frame
@@ -30,24 +48,34 @@ public class Player_control : MonoBehaviour
         //이 함수를 통해 카메라에서 마우스가 위치한 좌표를 얻어낼 수 있다
         //ScreenToWolrdPoint를 통해 스크린상의 좌표를 World상의 좌표로 변환해서 준다.
         //이래야 게임 내에서 좌표 계산을 할 수 있다
-        Mousepos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-
-        //Mathf.Atan2(y, x)를 통해 tan(y/x)값을 구할 수 있다.
-        //이를 통해 각도값을 만들어줄 것이다. 참고로 Atan2는 Radian 값을 반환한다
-        angle = Mathf.Atan2(Mousepos.y - transform.position.y, Mousepos.x - transform.position.x);
+        Mousepos = Cam.ScreenToWorldPoint(Input.mousePosition);
+       
+        //atan 없이 마우스 좌표와 각도 따오기
+        angle2 = Mousepos -  (Vector2)transform.position;
 
         //player을 회전시키는 문장
+        transform.right = angle2.normalized;
+        //
+        
 
-        //angle 값에 Mathf.Rad2Deg 를 곱해 Radian 값을 degree 값을 바꿔준다.
-        //이 degree 값을, Quanternion.AngleAxis에 넣어 회전시켜준다
-        //뒤에 넣는 벡터는 회전축인데, 우린 탑뷰이므로 foward를 넣어준다
-        //transform.rotation = Quaternion.AngleAxis(angle * Mathf.Rad2Deg, Vector3.forward);
+        //Bullet 발사 구현
+        if (Input.GetMouseButtonDown(0)) {
+
+            //Instantiate로 Bullet 생성
+
+            Instantiate(Bullet, transform.position, transform.rotation);
+            // Vector2 Bullet_vec = new Vector2(angle2.x, angle2.y);
+            // Bullet.GetComponent<Rigidbody2D>().velocity = Bullet_vec.normalized * B_s;
+            
+        }
+        //
 
 
-        //회전 속도를 제어할 수 있는 코드
-        transform.rotation = Quaternion.Lerp(transform.rotation, 
-            Quaternion.AngleAxis(angle * Mathf.Rad2Deg, Vector3.forward), rotation_speed *Time.deltaTime);
+        //Player 이동구현
 
+        Move_vector = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
+        Rigid_body2.velocity = Move_vector.normalized * Move_speed;
+        //
 
     }
 }

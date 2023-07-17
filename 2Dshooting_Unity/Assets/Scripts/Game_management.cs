@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Game_management : MonoBehaviour
 {
@@ -26,11 +27,9 @@ public class Game_management : MonoBehaviour
     //게임을 시작시키는 함수
     public void Game_start() {
 
-        //게임 시작 시, SetActive 이용 start_ui 비활성화 
-        Start_ui.SetActive(false);
-        //게임 active true, 실행
-        Game_playing.SetActive(true);
-
+        //게임 시작 시, LoadScene 이용 Scene을 변경하기
+        SceneManager.LoadScene("Game_playing");
+        
     }
 
 
