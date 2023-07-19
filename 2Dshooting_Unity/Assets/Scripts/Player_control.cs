@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+ 
 
 public class Player_control : MonoBehaviour
 {   
@@ -142,7 +143,7 @@ public class Player_control : MonoBehaviour
                     }               
             }
             //수동으로 재장전을 하는 기능
-            else if (Input.GetKeyDown(KeyCode.R)) {
+            else if (Input.GetKeyDown(KeyCode.R) && Loaded_bullet < B_megazine) {
                 
                 FindObjectOfType<GamePlay_management>().Loaded_bullet_ui_text.SetText("Reloding");
 
@@ -159,23 +160,21 @@ public class Player_control : MonoBehaviour
         GamePlay_management.instance.Change_bullet_ui_text(B_megazine);
     }
 
-
-
     //Player와 Enemy_bullet과의 충돌 판정
     private void OnTriggerEnter2D(Collider2D other) {
 
         if (other.gameObject.tag == "Enemy_bullet") {
             float E_B = other.gameObject.GetComponent<Enemy_bullet_control>().Bullet_hp; 
             Player_hp -= E_B;
+            GamePlay_management.instance.Change_Hp_ui_text(Player_hp);
             if (Player_hp <= 0) {
                 Destroy(gameObject);
             }
-
         }
     }
 
 
-
+     
 
 
 

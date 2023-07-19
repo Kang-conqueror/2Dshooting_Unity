@@ -33,5 +33,10 @@ public class Game_management : MonoBehaviour
     }
 
 
+    public void Return_to_start() {
+
+        SceneManager.LoadScene("Game_start");
+        
+    }
 
 }
